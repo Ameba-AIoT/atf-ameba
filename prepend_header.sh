@@ -46,10 +46,10 @@ function MakeFixedWidthHeaderString() {
 ################
 # Main
 ################
-#if [ "$#" -lt 3 ]; then
-#    Usage
-#    exit 1
-#fi
+if [ "$#" -lt 3 ]; then
+    Usage
+    exit 1
+fi
 
 # Get Parameters
 IMAGE_FILENAME=$1
@@ -62,8 +62,7 @@ PATTERN_2=0x3FCC66FC
 RSVD=0xFFFFFFFFFFFFFFFF
 IMG2SIGN=0x3831393538373131
 IMAGE_LEN=$(du -b $IMAGE_FILENAME | cut -f 1)
-#IMAGE_ADDR="0x$(grep $IMAGE_SECTION_START_NAME $SYMBOL_LIST | awk '{print $1}')"
-IMAGE_ADDR=$2
+IMAGE_ADDR="0x$(grep $IMAGE_SECTION_START_NAME $SYMBOL_LIST | awk '{print $1}')"
 IMAGE_FILENAME_PREPEND="${IMAGE_FILENAME%.*}"'_prepend.'"${IMAGE_FILENAME##*.}"
 
 IMAGE_FILENAME_NEW=$(basename $IMAGE_FILENAME)

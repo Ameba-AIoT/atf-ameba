@@ -59,7 +59,7 @@ if [ "$IMAGE_FILENAME" == "km0_image2_all.bin" ] || [ "$IMAGE_FILENAME" == "km4_
 	$ELF2BIN manifest manifest_img2.json key_img2.json $KM4_IMG_DIR/km0_km4_image2_tmp.bin $KM4_IMG_DIR/manifest.bin
 	$ELF2BIN rsip $KM4_IMG_DIR/km0_image2_all.bin $KM4_IMG_DIR/km0_image2_all_en.bin 0x0c000000 manifest_img2.json
 	$ELF2BIN rsip $KM4_IMG_DIR/km4_image2_all.bin $KM4_IMG_DIR/km4_image2_all_en.bin 0x0e000000 manifest_img2.json
-	$ELF2BIN cert cert.json key_cert.json $KM4_IMG_DIR/cert.bin 0 key_img2.json 1 key_img3.json 2 key_ca7_bl1.json
+	$ELF2BIN cert cert.json key_cert.json $KM4_IMG_DIR/cert.bin 0 key_img2.json 1 key_img3.json 2 key_ca7_bl1.json 3 key_ca7_fip.json
 
 	if [ -f $KM4_IMG_DIR/km0_image2_all_en.bin ] && [ -f $KM4_IMG_DIR/km4_image2_all_en.bin ]; then
 		rm -rf $KM4_IMG_DIR/km0_km4_image2_tmp.bin
@@ -106,5 +106,10 @@ if [ "$IMAGE_FILENAME" == "bl1_all.bin" ]; then
 	mv $CA7_IMG_DIR/bl1_all_tmp.bin $CA7_IMG_DIR/bl1_all.bin
 fi
 
+if [ "$IMAGE_FILENAME" == "fip.bin" ]; then
+	$ELF2BIN manifest manifest_ca7_fip.json key_ca7_fip.json $CA7_IMG_DIR/fip.bin $CA7_IMG_DIR/manifest.bin
+	cat $CA7_IMG_DIR/manifest.bin $CA7_IMG_DIR/fip.bin > $CA7_IMG_DIR/fip_tmp.bin
+	mv $CA7_IMG_DIR/fip_tmp.bin $CA7_IMG_DIR/fip.bin
+fi
 
 

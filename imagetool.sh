@@ -16,7 +16,6 @@ Usage() {
 #fi
 
 pwd
-cd boot/atf
 
 # Get Parameters
 COMPILEOS=$(uname -o)
@@ -101,8 +100,11 @@ if [ "$IMAGE_FILENAME" == "km4_image3_all.bin" ]; then
 fi
 
 if [ "$IMAGE_FILENAME" == "bl1_all.bin" ]; then
+	#echo "will do $ELF2BIN manifest manifest_ca7_bl1.json key_ca7_bl1.json $CA7_IMG_DIR/bl1_all.bin $CA7_IMG_DIR/manifest.bin"
 	$ELF2BIN manifest manifest_ca7_bl1.json key_ca7_bl1.json $CA7_IMG_DIR/bl1_all.bin $CA7_IMG_DIR/manifest.bin
+	#echo "will do cat $CA7_IMG_DIR/manifest.bin $CA7_IMG_DIR/bl1_all.bin > $CA7_IMG_DIR/bl1_all_tmp.bin"
 	cat $CA7_IMG_DIR/manifest.bin $CA7_IMG_DIR/bl1_all.bin > $CA7_IMG_DIR/bl1_all_tmp.bin
+	#echo "will do mv $CA7_IMG_DIR/bl1_all_tmp.bin $CA7_IMG_DIR/bl1_all.bin"
 	mv $CA7_IMG_DIR/bl1_all_tmp.bin $CA7_IMG_DIR/bl1_all.bin
 fi
 

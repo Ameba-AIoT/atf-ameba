@@ -35,7 +35,7 @@
 
 #define MAP_FLASH0	MAP_REGION_FLAT(SHEIPA_FLASH0_BASE, \
 					SHEIPA_FLASH0_SIZE, \
-					MT_MEMORY | MT_RO | MT_SECURE)
+					MT_MEMORY | MT_RW | MT_NS)
 
 /*
  * Table of regions for various BL stages to map using the MMU.

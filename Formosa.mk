@@ -94,16 +94,14 @@ define boot/atf/image
 	$(Q)$(call PKG_EXEC,make -C $(DIR_ATF) fiptool fip)
 	$(DIR_ATF)/prepend_header.sh $(DIR_ATF_BUILD)/bl1_sram.bin __ca7_bl1_sram_start__ $(DIR_ATF_BUILD)/bl1/bl1_sym.map 
 	$(DIR_ATF)/prepend_header.sh $(DIR_ATF_BUILD)/bl1.bin __ca7_bl1_dram_start__ $(DIR_ATF_BUILD)/bl1/bl1_sym.map
-	cat $(DIR_ATF_BUILD)/bl1_sram_prepend.bin $(DIR_ATF_BUILD)/bl1_prepend.bin > $(DIR_ATF_BUILD)/bl1_all.bin
-	$(DIR_ATF)/imagetool.sh $(IMAGE_TARGET_FOLDER)/bl1_all.bin
-	
-	$(DIR_ATF)/imagetool.sh $(IMAGE_TARGET_FOLDER)/fip.bin
+	$(DIR_ATF)/prepend_header.sh $(DIR_ATF_BUILD)/fip.bin __ca7_fip_dram_start__ $(DIR_ATF_BUILD)/bl1/bl1_sym.map
+	cat $(DIR_ATF_BUILD)/bl1_sram_prepend.bin $(DIR_ATF_BUILD)/bl1_prepend.bin $(DIR_ATF_BUILD)/fip_prepend.bin > $(DIR_ATF_BUILD)/ap_image_all.bin
+	$(DIR_ATF)/imagetool.sh $(IMAGE_TARGET_FOLDER)/ap_image_all.bin
 	
 	rm -rf $(DIR_ATF_BUILD)/*prepend.bin
 
 	$(Q)mkdir -p $(DIR_IMAGE) && \
-	cp -r $(DIR_ATF_BUILD)/bl1_all.bin $(DIR_IMAGE) && \
-	cp -r $(DIR_ATF_BUILD)/fip.bin $(DIR_IMAGE)
+	cp -r $(DIR_ATF_BUILD)/ap_image_all.bin $(DIR_IMAGE)
 
 endef
 

@@ -11,3 +11,4 @@
 */ipkg-arm_cortex-*/
 build/*
 mbedtls/*
+tools/fiptool/fiptool

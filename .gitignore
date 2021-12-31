@@ -1,0 +1,13 @@
+*.o
+*.built*
+*.configured*
+*.pkgdir*
+*.prepared
+*.quilt_checked
+*.source_dir
+*.so.*
+*.so
+*.a
+*/ipkg-arm_cortex-*/
+build/*
+mbedtls/*

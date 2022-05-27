@@ -21,6 +21,18 @@
 
 #include "sheipa_private.h"
 
+typedef struct {
+	unsigned int IDAU_BARx;		/*!< ,	Address offset: 0x00 */
+	unsigned int IDAU_LARx;		/*!< ,	Address offset: 0x04 */
+} MPC_EntryTypeDef;
+
+typedef struct {
+	MPC_EntryTypeDef ENTRY[8]; /*!< ,	Address offset: 0x00 ~ 0x3C*/
+	unsigned int IDAU_CTRL;		/*!< ,	Address offset: 0x40 */
+	unsigned int IDAU_LOCK;		/*!< ,	Address offset: 0x44 */
+} MPC_TypeDef;
+
+#define MPC1			((MPC_TypeDef			*) MPC1_BASE_S)
 
 extern void sys_timer_enable(unsigned char en);
 
@@ -174,11 +186,19 @@ static int sheipa_bl2_handle_post_image_load(unsigned int image_id)
 		pager_mem_params = get_bl_mem_params_node(BL32_IMAGE_ID);
 		assert(pager_mem_params);
 		pager_mem_params->ep_info.lr_svc = bl_mem_params->ep_info.pc;
+
+		MPC1->ENTRY[1].IDAU_BARx = SHEIPA_OPTEE_SHMEM_START - DRAM_START_ADDR;
+#else
+		MPC1->ENTRY[1].IDAU_BARx = NS_DRAM0_BASE - DRAM_START_ADDR;
 #endif
+		/* configure MPC to set FIP location to Non-secure */
+		MPC1->ENTRY[1].IDAU_LARx = 0x0FFFFFFF;
+		MPC1->IDAU_CTRL |= (1 << 1);
 
 		/* BL33 expects to receive the primary CPU MPID (through r0) */
 		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();
 		bl_mem_params->ep_info.spsr = sheipa_get_spsr_for_bl33_entry();
+
 		break;
 	default:
 		/* Do nothing in default case */

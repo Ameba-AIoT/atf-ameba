@@ -30,12 +30,15 @@
 #define MAP_BL32_MEM	MAP_REGION_FLAT(BL32_MEM_BASE, BL32_MEM_SIZE,	\
 					MT_MEMORY | MT_RW | MT_SECURE)
 
+#define MAP_S_DRAM0	MAP_REGION_FLAT(NS_DRAM0_BASE, NS_DRAM0_SIZE,	\
+					MT_MEMORY | MT_RW | MT_SECURE)
+
 #define MAP_NS_DRAM0	MAP_REGION_FLAT(NS_DRAM0_BASE, NS_DRAM0_SIZE,	\
 					MT_MEMORY | MT_RW | MT_NS)
 
 #define MAP_FLASH0	MAP_REGION_FLAT(SHEIPA_FLASH0_BASE, \
 					SHEIPA_FLASH0_SIZE, \
-					MT_MEMORY | MT_RW | MT_NS)
+					MT_MEMORY | MT_RW | MT_SECURE)
 
 /*
  * Table of regions for various BL stages to map using the MMU.
@@ -57,7 +60,7 @@ static const mmap_region_t plat_sheipa_mmap[] = {
 	MAP_FLASH0,
 	MAP_SHARED_RAM,
 	MAP_DEVICE0,
-	MAP_NS_DRAM0,
+	MAP_S_DRAM0,
 	MAP_DEVICE1,
 	MAP_BL32_MEM,
 	{0}

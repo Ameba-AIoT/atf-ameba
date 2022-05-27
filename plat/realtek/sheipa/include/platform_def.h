@@ -61,6 +61,8 @@
  * and secure DRAM.
  */
 
+#define DRAM_START_ADDR		0x60000000
+
 #define SEC_ROM_BASE			0x0
 #define SEC_ROM_SIZE			0x00000400
 
@@ -159,6 +161,9 @@
 #define SHEIPA_OPTEE_PAGEABLE_LOAD_BASE	(BL32_BASE + 0x00200000)
 #define SHEIPA_OPTEE_PAGEABLE_LOAD_SIZE	0x00100000
 
+#define SHEIPA_OPTEE_SHMEM_START		0x602e0000
+#define SHEIPA_OPTEE_SHMEM_SIZE		0x00020000
+
 /*******************************************************************************
  * TSP  specific defines.
  ******************************************************************************/
@@ -227,5 +232,7 @@
  * System counter
  */
 #define SYS_COUNTER_FREQ_IN_TICKS	(0x1800000)
+
+#define MPC1_BASE_S          0x51001A00
 
 #endif /* PLATFORM_DEF_H */

@@ -9,4 +9,6 @@ BL32_SOURCES		+=	plat/realtek/sheipa/sp_min/sp_min_setup.c	\
 				plat/common/plat_psci_common.c		\
 				plat/realtek/sheipa/sheipa_pm.c		\
 				plat/realtek/sheipa/topology.c		\
+				plat/realtek/sheipa/service/rtk_svc_setup.c\
+				plat/realtek/sheipa/service/bsec_svc.c\
 				${SHEIPA_GIC_SOURCES}

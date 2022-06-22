@@ -15,6 +15,9 @@
 #include <drivers/console.h>
 
 #include "../sheipa_private.h"
+#include "basic_types.h"
+#include "hal_platform.h"
+#include "sysreg_hsys.h"
 
 #if RESET_TO_SP_MIN
 #error sheipa does not support RESET_TO_SP_MIN
@@ -86,11 +89,48 @@ void sp_min_plat_arch_setup(void)
 
 }
 
+#ifndef AMEBAD2_TODO
+uint32_t arm_gic_freq_get_div(void)
+{
+	return HSYS_GET_CKD_AP(HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL));
+}
+
+/* switch AP frequency to ap_pll/3, this function shall be called from privileged mode */
+void arm_gic_freq_switch(uint32_t pre_div)
+{
+	uint32_t temp;
+
+	/* if div is 1 or 2, then div 3 to access gic */
+	if (pre_div < AP_CLK_DIV3) {
+		temp = HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL);
+		HAL_WRITE32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL, (temp & ~HSYS_MASK_CKD_AP) | HSYS_CKD_AP(AP_CLK_DIV3));
+	}
+}
+
+/* restore AP frequency to pre div */
+void arm_gic_freq_restore(uint32_t pre_div)
+{
+	uint32_t temp;
+
+	if (pre_div < AP_CLK_DIV3) {
+		temp = HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL);
+		HAL_WRITE32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL, (temp & ~HSYS_MASK_CKD_AP) | HSYS_CKD_AP(pre_div));
+	}
+
+}
+#endif
+
 void sp_min_platform_setup(void)
 {
+	/* Only Core0 is running in here */
+	uint32_t pre_div = arm_gic_freq_get_div();
+	arm_gic_freq_switch(pre_div);
+
 	/* Initialize the gic cpu and distributor interfaces */
 	plat_sheipa_gic_driver_init();
 	plat_sheipa_gic_init();
+
+	arm_gic_freq_restore(pre_div);
 }
 
 unsigned int plat_get_syscnt_freq2(void)

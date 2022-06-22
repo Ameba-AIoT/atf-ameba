@@ -69,15 +69,4 @@ void bl1_plat_arch_setup(void)
 void bl1_platform_setup(void)
 {
 	plat_sheipa_io_setup();
-
-	/*set system counter CNTVOFF(offset from vitual to physical counter) to 0,
-	because value of CNTVOFF could be unpredictable if virtualization is not 
-	realized. CNTOFF can only be accessed in monitor mode with SCR.NS=1.*/
-	write_scr(read_scr() | SCR_NS_BIT);
-	isb();
-
-	write64_cntvoff(0);
-
-	write_scr(read_scr() & ~SCR_NS_BIT);
-	isb();
 }

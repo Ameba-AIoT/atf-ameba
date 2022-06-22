@@ -25,11 +25,12 @@ march32-set-${ARM_CORTEX_A9}	:= -mcpu=cortex-a9
 march32-set-${ARM_CORTEX_A12}	:= -mcpu=cortex-a12
 march32-set-${ARM_CORTEX_A15}	:= -mcpu=cortex-a15
 march32-set-${ARM_CORTEX_A17}	:= -mcpu=cortex-a17
-march32-neon-$(ARM_WITH_NEON)	:= -mfpu=neon
+#march32-neon-$(ARM_WITH_NEON)	:= -mfpu=neon
+march32-fpu-yes			:= -mfpu=auto -mfloat-abi=softfp
 
 # default to -march=armv7-a as target directive
 march32-set-yes			?= -march=armv7-a
-march32-directive		:= ${march32-set-yes} ${march32-neon-yes}
+march32-directive		:= ${march32-set-yes} ${march32-neon-yes} ${march32-fpu-yes}
 endif
 
 # Platform may override these extension support directives:

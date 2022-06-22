@@ -190,11 +190,11 @@ target32-directive	= 	-target armv8a-none-eabi
 
 # Set the compiler's target architecture profile based on ARM_ARCH_MINOR option
 ifeq (${ARM_ARCH_MINOR},0)
-march32-directive	= 	-march=armv8-a
-march64-directive	= 	-march=armv8-a
+march32-directive	= 	-march=armv8-a -mfpu=neon -mfloat-abi=softfp
+march64-directive	= 	-march=armv8-a -mfpu=neon -mfloat-abi=softfp
 else
-march32-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a
-march64-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a
+march32-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a -mfpu=neon -mfloat-abi=softfp
+march64-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a -mfpu=neon -mfloat-abi=softfp
 endif
 
 define try-run
@@ -212,12 +212,12 @@ define cc-option
 $(call try-run, $(1) -Werror $(2) $(3) -c -x c /dev/null -o "$$TMP",$(3),$(4))
 endef
 
-march32-directive	=	$(call cc-option, $(CC), ,-march=armv8.2-a+fp16+dotprod, \
+#march32-directive	=	$(call cc-option, $(CC), ,-march=armv8.2-a+fp16+dotprod, \
 				$(call cc-option, $(CC), ,-march=armv8.2-a, \
 				$(call cc-option, $(CC), ,-march=armv8-a+crc, \
 				$(call cc-option, $(CC), ,-march=armv8-a, \
 				$(call cc-option, $(CC), ,-march=armv7-a -Wa$(comma)-march=armv8-a)))))
-march64-directive	=	$(call cc-option, $(CC), ,-march=armv8.2-a+fp16+dotprod, \
+#march64-directive	=	$(call cc-option, $(CC), ,-march=armv8.2-a+fp16+dotprod, \
 				$(call cc-option, $(CC), ,-march=armv8.2-a, \
 				$(call cc-option, $(CC), ,-march=armv8-a+crc, \
 				$(call cc-option, $(CC), ,-march=armv8-a, \

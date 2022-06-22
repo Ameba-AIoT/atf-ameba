@@ -37,6 +37,105 @@ vector_base bl1_vector_table
 	 */
 
 func bl1_entrypoint
+
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_sys
+	mov r0, #0
+	mov r1, #0
+	mov r2, #0
+	mov r3, #0
+	mov r4, #0
+	mov r5, #0
+	mov r6, #0
+	mov r7, #0
+	mov r8, #0
+	mov r9, #0
+	mov r10, #0
+	mov r11, #0
+	mov r12, #0
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_irq
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_fiq
+	mov r8, #0
+	mov r9, #0
+	mov r10, #0
+	mov r11, #0
+	mov r12, #0
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_abt
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_und
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_mon
+	mov sp, #0
+	mov lr, #0
+
+	cps #MODE32_svc
+
+	mov r0, #(0xFF <<20)
+	mcr p15, 0, r0, c1, c0, 2
+	mrc p15, 0, r0, c1, c0, 2
+	ubfx r0, r0, #20, #1
+	cmp r0, #1
+	bne ttb_setup
+
+	mrc p15, 0, r1, c1, c0, 2
+	orr r1, r1, #(0xF <<20)
+	mcr p15, 0, r1, c1, c0, 2
+	mov r1, #(0x1<<30)
+	isb
+	vmsr fpexc, r1
+
+	mov r1, #0
+	mov r2, #0
+	vmov.f64	d0, r1, r2
+	vmov.f64	d1, d0
+	vmov.f64	d2, d0
+	vmov.f64	d3, d0
+	vmov.f64	d4, d0
+	vmov.f64	d5, d0
+	vmov.f64	d6, d0
+	vmov.f64	d7, d0
+	vmov.f64	d8, d0
+	vmov.f64	d9, d0
+	vmov.f64	d10, d0
+	vmov.f64	d11, d0
+	vmov.f64	d12, d0
+	vmov.f64	d13, d0
+	vmov.f64	d14, d0
+	vmov.f64	d15, d0
+	vmov.f64	d16, d0
+	vmov.f64	d17, d0
+	vmov.f64	d18, d0
+	vmov.f64	d19, d0
+	vmov.f64	d20, d0
+	vmov.f64	d21, d0
+	vmov.f64	d22, d0
+	vmov.f64	d23, d0
+	vmov.f64	d24, d0
+	vmov.f64	d25, d0
+	vmov.f64	d26, d0
+	vmov.f64	d27, d0
+	vmov.f64	d28, d0
+	vmov.f64	d29, d0
+	vmov.f64	d30, d0
+	vmov.f64	d31, d0
+
+ttb_setup:
+
 /* ---------------------------------------------------------------------
 * If the reset address is programmable then bl1_entrypoint() is
 * executed only on the cold boot path. Therefore, we can skip the warm

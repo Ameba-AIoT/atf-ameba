@@ -13,7 +13,7 @@ ENTRY(bl1_entrypoint)
 
 MEMORY {
     ROM (rx): ORIGIN = 0x0, LENGTH = 0x400
-    SRAM (rx): ORIGIN = 0x3001FE00, LENGTH = 0x200
+    SRAM (rx): ORIGIN = 0x2001FE00, LENGTH = 0x200
     DRAM (rx): ORIGIN = BL1_RO_BASE + 0x20, LENGTH = BL1_RO_LIMIT - BL1_RO_BASE - 0x20
     RAM (rwx): ORIGIN = BL1_RW_BASE, LENGTH = BL1_RW_LIMIT - BL1_RW_BASE
 }
@@ -26,7 +26,6 @@ SECTIONS
      } >ROM
 
     .boot_sram : {
-	__ca7_bl1_sram_start__ = .;
         KEEP(*bl1_entrypoint_sram.o(.text*))
         . = ALIGN(32);
      } >SRAM
@@ -35,7 +34,6 @@ SECTIONS
 
 #if SEPARATE_CODE_AND_RODATA
     .text . : {
-	__ca7_bl1_dram_start__ = .;
         __TEXT_START__ = .;
         *bl1_entrypoint.o(.text*)
         *(SORT_BY_ALIGNMENT(.text*))
@@ -168,5 +166,3 @@ SECTIONS
 
     ASSERT(. <= BL1_RW_LIMIT, "BL1's RW section has exceeded its limit.")
 }
-
-__ca7_fip_dram_start__ = SHEIPA_FLASH0_BASE;

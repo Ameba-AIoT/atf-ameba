@@ -17,7 +17,7 @@ AARCH32_INSTRUCTION_SET		:= T32
 AARCH32_SP			?= none
 
 # The Target build architecture. Supported values are: aarch64, aarch32.
-ARCH				:= $(patsubst "%",%,$(CONFIG_ARCH_atf))
+ARCH				:= aarch32
 
 # ARM Architecture major and minor versions: 8.0 by default.
 ARM_ARCH_MAJOR			?= 8
@@ -75,7 +75,7 @@ DEBUG				:= 1
 DECRYPTION_SUPPORT		:= none
 
 # Build platform
-DEFAULT_PLAT			:= $(patsubst "%",%,$(CONFIG_PLAT_atf))
+DEFAULT_PLAT			:= sheipa
 
 # Disable the generation of the binary image (ELF only).
 DISABLE_BIN_GENERATION		:= 0

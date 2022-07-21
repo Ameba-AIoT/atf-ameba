@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-include Formosa.mk
 #
 # Trusted Firmware Version
 #
@@ -501,7 +500,12 @@ include common/backtrace/backtrace.mk
 
 include ${MAKE_HELPERS_DIRECTORY}plat_helpers.mk
 
-BUILD_BASE		:=	./build
+ifneq ($(O),)
+BUILD_BASE              :=      $(O)/build
+else
+BUILD_BASE              :=      ./build
+endif
+
 BUILD_PLAT		:=	${BUILD_BASE}/${PLAT}/${BUILD_TYPE}
 
 ifneq ($(ARCH),mips)

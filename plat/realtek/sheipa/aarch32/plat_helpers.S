@@ -96,7 +96,22 @@ endfunc plat_secondary_cold_boot_setup
 
 func plat_get_my_entrypoint
 	/* TODO support warm boot */
+	mov	r2, lr
+	bl	plat_is_my_cpu_primary
+	cmp	r0, #0
+	beq	1f
+	mov_imm	r1, 0x42008264
+	mov_imm	r3, 0x10000
+	ldr	r4, [r1]
+	tst	r4, r3
+	beq	1f
+	mov_imm	r1, PLAT_SHEIPA_WARM_BOOT_BASE
+	ldr	r0, [r1]
+	mov	lr, r2
+	bx	lr
+1:
 	mov	r0, #0
+	mov	lr, r2
 	bx	lr
 endfunc plat_get_my_entrypoint
 

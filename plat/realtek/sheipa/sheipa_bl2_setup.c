@@ -187,13 +187,15 @@ static int sheipa_bl2_handle_post_image_load(unsigned int image_id)
 		assert(pager_mem_params);
 		pager_mem_params->ep_info.lr_svc = bl_mem_params->ep_info.pc;
 
-		MPC1->ENTRY[1].IDAU_BARx = SHEIPA_OPTEE_SHMEM_START - DRAM_START_ADDR;
+		MPC1->ENTRY[7].IDAU_BARx = SHEIPA_OPTEE_SHMEM_START - DRAM_START_ADDR;
 #else
-		MPC1->ENTRY[1].IDAU_BARx = NS_DRAM0_BASE - DRAM_START_ADDR;
+		MPC1->ENTRY[7].IDAU_BARx = NS_DRAM0_BASE - DRAM_START_ADDR;
 #endif
 		/* configure MPC to set FIP location to Non-secure */
-		MPC1->ENTRY[1].IDAU_LARx = 0x0FFFFFFF;
-		MPC1->IDAU_CTRL |= (1 << 1);
+		MPC1->ENTRY[7].IDAU_LARx = 0x00600000 - 1;
+
+		MPC1->IDAU_CTRL |= BIT(7);
+		MPC1->IDAU_LOCK = 1;
 
 		/* BL33 expects to receive the primary CPU MPID (through r0) */
 		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();

@@ -19,7 +19,7 @@
  */
 static unsigned long secure_entrypoint;
 
-#ifndef AMEBAD2_TODO
+#ifndef AMEBASMART_TODO
 extern uint32_t arm_gic_freq_get_div(void);
 extern void arm_gic_freq_switch(uint32_t pre_div);
 extern void arm_gic_freq_restore(uint32_t pre_div);

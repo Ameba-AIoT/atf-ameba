@@ -89,7 +89,7 @@ void sp_min_plat_arch_setup(void)
 
 }
 
-#ifndef AMEBAD2_TODO
+#ifndef AMEBASMART_TODO
 uint32_t arm_gic_freq_get_div(void)
 {
 	return HSYS_GET_CKD_AP(HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL));

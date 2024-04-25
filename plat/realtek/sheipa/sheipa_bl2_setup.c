@@ -69,7 +69,7 @@ void bl2_platform_setup(void)
 {
 	security_setup();
 
-	/* AmebaD2 Initialize timer */
+	/* AmebaSmart Initialize timer */
 	sys_timer_enable(1);
 }
 

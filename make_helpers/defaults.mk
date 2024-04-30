@@ -75,7 +75,7 @@ DEBUG				:= 1
 DECRYPTION_SUPPORT		:= none
 
 # Build platform
-DEFAULT_PLAT			:= sheipa
+DEFAULT_PLAT			:= amebasmart
 
 # Disable the generation of the binary image (ELF only).
 DISABLE_BIN_GENERATION		:= 0

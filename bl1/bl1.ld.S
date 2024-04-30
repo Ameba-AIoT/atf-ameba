@@ -169,4 +169,4 @@ SECTIONS
     ASSERT(. <= BL1_RW_LIMIT, "BL1's RW section has exceeded its limit.")
 }
 
-__ca32_fip_dram_start__ = SHEIPA_FLASH0_BASE;
+__ca32_fip_dram_start__ = AMEBA_FLASH0_BASE;

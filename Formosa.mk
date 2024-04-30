@@ -8,7 +8,7 @@ DIR_ATF		:= $(shell pwd)/boot/atf
 DIR_OPTEE	:= $(shell pwd)/../optee
 DIR_OPTEE_OS	:= $(DIR_OPTEE)/optee_os
 DIR_UBOOT	:= $(DIR_ROOT)/package/boot/uboot
-DIR_ATF_BUILD	:= $(DIR_ATF)/build/sheipa/debug
+DIR_ATF_BUILD	:= $(DIR_ATF)/build/amebasmart/debug
 
 UBOOT_CONFIG 	:= /dev/null
 

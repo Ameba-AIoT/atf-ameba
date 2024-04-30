@@ -34,7 +34,7 @@ else
 	ELF2BIN=./elf2bin.exe
 fi
 
-CA32_IMG_DIR=build/sheipa/debug
+CA32_IMG_DIR=build/amebasmart/debug
 
 
 $ELF2BIN manifest manifest_ca7.json key_ca7.json $CA32_IMG_DIR/ap_image_all.bin $CA32_IMG_DIR/manifest.bin

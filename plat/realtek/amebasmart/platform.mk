@@ -120,12 +120,9 @@ MBEDTLS_DIR	:= $(DIR_ATF)/mbedtls
 
 # use the ROTPK hash that is hardcoded in the ARM platform port. The
 # private/public RSA key pair may be found in plat/arm/board/common/rotpk.
-# TODO: Fast model did't have OTP HW, so we can't enable "regs" config
 ARM_ROTPK_LOCATION	=	devel_rsa
 
 # ROTPK key location, using arm example
-# TODO: we use rotpk of arm and you have to generate your rotpk for your
-# products.
 ROT_KEY	=	$(DIR_ATF)/plat/arm/board/common/rotpk/arm_rotprivk_rsa.pem
 # Include common TBB sources
 AUTH_SOURCES	:=	drivers/auth/auth_mod.c			\

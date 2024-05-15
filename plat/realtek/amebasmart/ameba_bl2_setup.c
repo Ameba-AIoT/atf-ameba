@@ -122,11 +122,6 @@ static uint32_t ameba_get_spsr_for_bl33_entry(void)
 	/* Currently we don't need EL2(hyp mode), so we jump to EL1 from EL3 */
 	mode = MODE_EL1;
 
-	/*
-	 * TODO: Consider the possibility of specifying the SPSR in
-	 * the FIP ToC and allowing the platform to have a say as
-	 * well.
-	 */
 	spsr = SPSR_64(mode, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
 #else
 	spsr = SPSR_MODE32(MODE32_svc,

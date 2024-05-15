@@ -92,7 +92,6 @@ poll_mailbox:
 endfunc plat_secondary_cold_boot_setup
 
 func plat_get_my_entrypoint
-	/* TODO support warm boot */
 	mov	x0, #0
 	ret
 endfunc plat_get_my_entrypoint

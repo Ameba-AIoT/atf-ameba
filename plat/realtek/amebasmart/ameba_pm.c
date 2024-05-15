@@ -19,11 +19,9 @@
  */
 static unsigned long secure_entrypoint;
 
-#ifndef AMEBASMART_TODO
 extern uint32_t arm_gic_freq_get_div(void);
 extern void arm_gic_freq_switch(uint32_t pre_div);
 extern void arm_gic_freq_restore(uint32_t pre_div);
-#endif
 
 /* Make composite power state parameter till power level 0 */
 #if PSCI_EXTENDED_STATE_ID
@@ -182,7 +180,6 @@ void ameba_pwr_domain_on_finish(const psci_power_state_t *target_state)
 	uint32_t pre_div = arm_gic_freq_get_div();
 	arm_gic_freq_switch(pre_div);
 
-	/* TODO: This setup is needed only after a cold boot */
 	plat_amebasmart_gic_pcpu_init();
 	/* Enable the gic cpu interface */
 	plat_amebasmart_gic_cpuif_enable();

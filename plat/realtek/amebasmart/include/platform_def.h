@@ -201,11 +201,6 @@
 #define DEVICE0_BASE			0x40000000
 #define DEVICE0_SIZE			0x20000000
 
-/* TODO: Non-volatile counters for Trusted board boot,
- * Because fast model did't have hw non-volatile counters, so
- * we did't implement this feature.
- */
-
 /*
  * GIC related constants
  */

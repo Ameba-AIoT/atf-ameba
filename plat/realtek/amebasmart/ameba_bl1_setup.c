@@ -64,6 +64,9 @@ void bl1_plat_arch_setup(void)
 				, BL_COHERENT_RAM_BASE, BL_COHERENT_RAM_END
 #endif
 				);
+
+	/* system counter is 50MHz */
+	write_cntfrq_el0(50000000);
 }
 
 void bl1_platform_setup(void)

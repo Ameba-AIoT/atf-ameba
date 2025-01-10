@@ -12,34 +12,46 @@ OUTPUT_ARCH(PLATFORM_LINKER_ARCH)
 ENTRY(bl1_entrypoint)
 
 MEMORY {
-    ROM (rx): ORIGIN = BL1_RO_BASE, LENGTH = BL1_RO_LIMIT - BL1_RO_BASE
+    ROM (rx): ORIGIN = 0x0, LENGTH = 0x400
+    SRAM (rx): ORIGIN = 0x3001FE00, LENGTH = 0x200
+    DRAM (rx): ORIGIN = BL1_RO_BASE + 0x20, LENGTH = BL1_RO_LIMIT - BL1_RO_BASE - 0x20
     RAM (rwx): ORIGIN = BL1_RW_BASE, LENGTH = BL1_RW_LIMIT - BL1_RW_BASE
 }
 
 SECTIONS
 {
-    . = BL1_RO_BASE;
-    ASSERT(. == ALIGN(PAGE_SIZE),
-           "BL1_RO_BASE address is not aligned on a page boundary.")
+    .boot_rom . : {
+        KEEP(*bl1_entrypoint_rom.o(.text*))
+        . = ALIGN(32);
+     } >ROM
+
+    .boot_sram : {
+        __ca32_bl1_sram_start__ = .;
+        KEEP(*bl1_entrypoint_sram.o(.text*))
+        . = ALIGN(32);
+     } >SRAM
+
+    . = BL1_RO_BASE + 0x20;
 
 #if SEPARATE_CODE_AND_RODATA
     .text . : {
+        __ca32_bl1_dram_start__ = .;
         __TEXT_START__ = .;
         *bl1_entrypoint.o(.text*)
         *(SORT_BY_ALIGNMENT(.text*))
         *(.vectors)
         . = ALIGN(PAGE_SIZE);
         __TEXT_END__ = .;
-     } >ROM
+     } >DRAM
 
      /* .ARM.extab and .ARM.exidx are only added because Clang need them */
      .ARM.extab . : {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-     } >ROM
+     } >DRAM
 
      .ARM.exidx . : {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-     } >ROM
+     } >DRAM
 
     .rodata . : {
         __RODATA_START__ = .;
@@ -58,7 +70,7 @@ SECTIONS
          */
         __RODATA_END__ = .;
          . = ALIGN(16);
-    } >ROM
+    } >DRAM
 #else
     ro . : {
         __RO_START__ = .;
@@ -77,7 +89,7 @@ SECTIONS
          * section.
          */
          . = ALIGN(16);
-    } >ROM
+    } >DRAM
 #endif
 
     ASSERT(__CPU_OPS_END__ > __CPU_OPS_START__,
@@ -101,7 +113,7 @@ SECTIONS
         __DATA_RAM_START__ = .;
         *(SORT_BY_ALIGNMENT(.data*))
         __DATA_RAM_END__ = .;
-    } >RAM AT>ROM
+    } >RAM AT>DRAM
 
     stacks . (NOLOAD) : {
         __STACKS_START__ = .;
@@ -156,3 +168,5 @@ SECTIONS
 
     ASSERT(. <= BL1_RW_LIMIT, "BL1's RW section has exceeded its limit.")
 }
+
+__ca32_fip_dram_start__ = AMEBA_FLASH0_BASE;

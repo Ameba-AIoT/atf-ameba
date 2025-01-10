@@ -91,6 +91,10 @@ define IMG_MAPFILE
     ${BUILD_DIR}/bl$(1).map
 endef
 
+define IMG_SYMFILE
+    ${BUILD_DIR}/bl$(1)_sym.map
+endef
+
 # IMG_ELF defines the elf file corresponding to a BL stage
 #   $(1) = BL stage (1, 2, 2u, 31, 32)
 define IMG_ELF
@@ -430,6 +434,7 @@ define MAKE_BL
         $(eval OBJS       := $(addprefix $(BUILD_DIR)/,$(call SOURCES_TO_OBJS,$(SOURCES))))
         $(eval LINKERFILE := $(call IMG_LINKERFILE,$(1)))
         $(eval MAPFILE    := $(call IMG_MAPFILE,$(1)))
+	$(eval SYMFILE    := $(call IMG_SYMFILE,$(1)))
         $(eval ELF        := $(call IMG_ELF,$(1)))
         $(eval DUMP       := $(call IMG_DUMP,$(1)))
         $(eval BIN        := $(call IMG_BIN,$(1)))
@@ -497,10 +502,18 @@ endif
 $(DUMP): $(ELF)
 	$${ECHO} "  OD      $$@"
 	$${Q}$${OD} -dx $$< > $$@
+	$${Q}$${NM} $$< | sort > $(SYMFILE)
 
 $(BIN): $(ELF)
 	$${ECHO} "  BIN     $$@"
+ifeq ($(1),1)
+	$${ECHO} "  BIN     ${BUILD_PLAT}/rom.bin"
+	$$(Q)$$(OC) -O binary -j .boot_rom $$< ${BUILD_PLAT}/bl1_rom.bin
+	$$(Q)$$(OC) -O binary -j .boot_sram $$< ${BUILD_PLAT}/bl1_sram.bin
+	$$(Q)$$(OC) -O binary -R .boot_rom -R .boot_sram $$< $$@
+else
 	$$(Q)$$(OC) -O binary $$< $$@
+endif
 	@${ECHO_BLANK_LINE}
 	@echo "Built $$@ successfully"
 	@${ECHO_BLANK_LINE}

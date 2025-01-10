@@ -189,12 +189,38 @@ target32-directive	= 	-target armv8a-none-eabi
 
 # Set the compiler's target architecture profile based on ARM_ARCH_MINOR option
 ifeq (${ARM_ARCH_MINOR},0)
-march32-directive	= 	-march=armv8-a
-march64-directive	= 	-march=armv8-a
+march32-directive	= 	-march=armv8-a -mfpu=neon -mfloat-abi=softfp
+march64-directive	= 	-march=armv8-a -mfpu=neon -mfloat-abi=softfp
 else
-march32-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a
-march64-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a
+march32-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a -mfpu=neon -mfloat-abi=softfp
+march64-directive	= 	-march=armv8.${ARM_ARCH_MINOR}-a -mfpu=neon -mfloat-abi=softfp
 endif
+
+define try-run
+$(shell set -e;				\
+	TMP="$(TMPOUT).$$$$.tmp";	\
+	TMPO="$(TMPOUT).$$$$.o";	\
+	if ($(1)) >/dev/null 2>&1;	\
+	then echo "$(2)";		\
+	else echo "$(3)";		\
+	fi;				\
+	rm -f "$$TMP" "$$TMPO")
+endef
+
+define cc-option
+$(call try-run, $(1) -Werror $(2) $(3) -c -x c /dev/null -o "$$TMP",$(3),$(4))
+endef
+
+#march32-directive	=	$(call cc-option, $(CC), ,-march=armv8.2-a+fp16+dotprod, \
+				$(call cc-option, $(CC), ,-march=armv8.2-a, \
+				$(call cc-option, $(CC), ,-march=armv8-a+crc, \
+				$(call cc-option, $(CC), ,-march=armv8-a, \
+				$(call cc-option, $(CC), ,-march=armv7-a -Wa$(comma)-march=armv8-a)))))
+#march64-directive	=	$(call cc-option, $(CC), ,-march=armv8.2-a+fp16+dotprod, \
+				$(call cc-option, $(CC), ,-march=armv8.2-a, \
+				$(call cc-option, $(CC), ,-march=armv8-a+crc, \
+				$(call cc-option, $(CC), ,-march=armv8-a, \
+				$(call cc-option, $(CC), ,-march=armv7-a -Wa$(comma)-march=armv8-a)))))
 endif
 
 # Memory tagging is supported in architecture Armv8.5-A AArch64 and onwards
@@ -449,7 +475,10 @@ include common/backtrace/backtrace.mk
 
 include ${MAKE_HELPERS_DIRECTORY}plat_helpers.mk
 
-BUILD_BASE		:=	./build
+ifeq (${BUILD_BASE},)
+    BUILD_BASE		:=	./build
+endif
+
 BUILD_PLAT		:=	${BUILD_BASE}/${PLAT}/${BUILD_TYPE}
 
 SPDS			:=	$(sort $(filter-out none, $(patsubst services/spd/%,%,$(wildcard services/spd/*))))
@@ -461,7 +490,6 @@ INCLUDE_TBBR_MK		:=	1
 ################################################################################
 # Include SPD Makefile if one has been specified
 ################################################################################
-
 ifneq (${SPD},none)
     ifeq (${ARCH},aarch32)
         $(error "Error: SPD is incompatible with AArch32.")
@@ -506,7 +534,6 @@ ifneq (${SPD},none)
     # If both BL32_SOURCES and BL32 are defined, the binary takes precedence
     # over the sources.
 endif
-
 ################################################################################
 # Include the platform specific Makefile after the SPD Makefile (the platform
 # makefile may use all previous definitions in this file)
@@ -768,9 +795,7 @@ endif
 ################################################################################
 # Include libraries' Makefile that are used in all BL
 ################################################################################
-
 include lib/stack_protector/stack_protector.mk
-
 ################################################################################
 # Auxiliary tools (fiptool, cert_create, etc)
 ################################################################################
@@ -911,10 +936,18 @@ endif
 # platform to overwrite the default options
 ################################################################################
 
+$(eval $(call add_define,PLAT_${PLAT}))
+$(eval $(call add_define,LOG_LEVEL))
+$(eval $(call add_define,TRUSTED_BOARD_BOOT))
+$(eval $(call add_define,PROGRAMMABLE_RESET_ADDRESS))
+$(eval $(call add_define,COLD_BOOT_SINGLE_CPU))
+$(eval $(call add_define,ERROR_DEPRECATED))
+$(eval $(call add_define,SPIN_ON_BL1_EXIT))
+
+$(eval $(call add_define,ARM_CCI_PRODUCT_ID))
 $(eval $(call add_define,ALLOW_RO_XLAT_TABLES))
 $(eval $(call add_define,ARM_ARCH_MAJOR))
 $(eval $(call add_define,ARM_ARCH_MINOR))
-$(eval $(call add_define,COLD_BOOT_SINGLE_CPU))
 $(eval $(call add_define,CTX_INCLUDE_AARCH32_REGS))
 $(eval $(call add_define,CTX_INCLUDE_FPREGS))
 $(eval $(call add_define,CTX_INCLUDE_PAUTH_REGS))
@@ -942,10 +975,9 @@ $(eval $(call add_define,HANDLE_EA_EL3_FIRST))
 $(eval $(call add_define,HW_ASSISTED_COHERENCY))
 $(eval $(call add_define,LOG_LEVEL))
 $(eval $(call add_define,MEASURED_BOOT))
+$(eval $(call add_define,HW_ASSISTED_COHERENCY))
 $(eval $(call add_define,NS_TIMER_SWITCH))
 $(eval $(call add_define,PL011_GENERIC_UART))
-$(eval $(call add_define,PLAT_${PLAT}))
-$(eval $(call add_define,PROGRAMMABLE_RESET_ADDRESS))
 $(eval $(call add_define,PSCI_EXTENDED_STATE_ID))
 $(eval $(call add_define,RAS_EXTENSION))
 $(eval $(call add_define,RESET_TO_BL31))
@@ -953,7 +985,6 @@ $(eval $(call add_define,SEPARATE_CODE_AND_RODATA))
 $(eval $(call add_define,SEPARATE_NOBITS_REGION))
 $(eval $(call add_define,RECLAIM_INIT_CODE))
 $(eval $(call add_define,SPD_${SPD}))
-$(eval $(call add_define,SPIN_ON_BL1_EXIT))
 $(eval $(call add_define,SPM_MM))
 $(eval $(call add_define,SPMD_SPM_AT_SEL2))
 $(eval $(call add_define,TRUSTED_BOARD_BOOT))
@@ -1253,6 +1284,11 @@ cscope:
 	@echo "  CSCOPE"
 	${Q}find ${CURDIR} -name "*.[chsS]" > cscope.files
 	${Q}cscope -b -q -k
+
+image: fiptool fip
+	@cp ${BUILD_PLAT}/${FIP_NAME} ${BUILD_PLAT}/../../image
+	@cp ${BUILD_PLAT}/bl1*.bin ${BUILD_PLAT}/../../image
+	#$(call boot/atf/image)
 
 help:
 	@echo "usage: ${MAKE} [PLAT=<platform>] [OPTIONS] [TARGET]"

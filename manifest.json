@@ -1,0 +1,58 @@
+{
+  "MANIFEST_VER": 1,
+
+  "boot":
+  {
+    "IMG_ID": "0",
+    "IMG_VER_MAJOR": 1,
+    "IMG_VER_MINOR": 1,
+
+    "SEC_EPOCH": 1,
+
+    "HASH_ALG": "sha256",
+
+    "RSIP_IV": "0102030405060708"
+  },
+
+  "//": "cert/app share IMG_ID/IMG_VER, rdp img is in app",
+  "app":
+  {
+    "IMG_ID": "1",
+    "IMG_VER_MAJOR": 1,
+    "IMG_VER_MINOR": 1,
+
+    "SEC_EPOCH": 1,
+
+    "HASH_ALG": "sha256",
+
+    "RSIP_IV": "213253647586a7b8"
+  },
+
+  "vbmeta":
+  {
+    "IMG_ID": "2",
+    "IMG_VER_MAJOR": 1,
+    "IMG_VER_MINOR": 1,
+
+    "SEC_EPOCH": 1,
+
+    "HASH_ALG": "sha256",
+
+    "RSIP_IV": "213253647586a7b8"
+  },
+
+  "SECURE_BOOT_EN": 0,
+  "//": "HASH_ALG: sha256/sha384/sha512/hmac256/hmac384/hmac512, hamc need key",
+  "HMAC_KEY": "9874918301909234686574856692873911223344556677889900aabbccddeeff",
+
+  "RSIP_EN": 0,
+  "//": "RSIP_MODE: 1 is XTS(CTR+ECB), 0 is CTR",
+  "RSIP_MODE": 1,
+  "CTR_KEY": "6AA34203018334474B25A0600996CA0968AA6228B886FF234B4EB9628B703C0A",
+  "ECB_KEY": "E2A0D6500BBF1DD8DC212098C230EB731ECE3A81AA11D0E6E538FA36BBA4FF6E",
+
+  "//": "Actual RDP IV is 16Byte which is composed by app RSIP_IV[7:0] + RDP_IV[15:8]",
+  "RDP_EN": 0,
+  "RDP_IV": "0123456789abcdef",
+  "RDP_KEY": "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff"
+}

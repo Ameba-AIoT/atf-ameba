@@ -187,7 +187,7 @@ static int ameba_bl2_handle_post_image_load(unsigned int image_id)
 		MPC1->ENTRY[7].IDAU_BARx = NS_DRAM0_BASE - DRAM_START_ADDR;
 #endif
 		/* configure MPC to set FIP location to Non-secure */
-		MPC1->ENTRY[7].IDAU_LARx = 0x00600000 - 1;
+		MPC1->ENTRY[7].IDAU_LARx = 0x00500000 - 1;
 
 		MPC1->IDAU_CTRL |= BIT(7);
 		MPC1->IDAU_LOCK = 1;

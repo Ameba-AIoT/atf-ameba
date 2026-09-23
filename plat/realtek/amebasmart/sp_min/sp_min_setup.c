@@ -14,10 +14,18 @@
 #include <common/debug.h>
 #include <drivers/console.h>
 
+#include <lib/mmio.h>
+
 #include "../ameba_private.h"
-#include "basic_types.h"
-#include "hal_platform.h"
-#include "sysreg_hsys.h"
+
+/* AP clock divider bits mirrored from the SDK (hal_platform.h / sysreg_hsys.h);
+ * copied, not included, to avoid the SDK type/BIT definitions clashing with ATF. */
+#define SYSTEM_CTRL_BASE_HP	0x41000000
+#define REG_HSYS_HP_CKSL	0x010
+#define HSYS_MASK_CKD_AP	((uint32_t)0x00000003 << 0)
+#define HSYS_CKD_AP(x)		(((uint32_t)((x) & 0x00000003)) << 0)
+#define HSYS_GET_CKD_AP(x)	((uint32_t)(((x) >> 0) & 0x00000003))
+#define AP_CLK_DIV3		2
 
 #if RESET_TO_SP_MIN
 #error ameba does not support RESET_TO_SP_MIN
@@ -91,7 +99,7 @@ void sp_min_plat_arch_setup(void)
 
 uint32_t arm_gic_freq_get_div(void)
 {
-	return HSYS_GET_CKD_AP(HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL));
+	return HSYS_GET_CKD_AP(mmio_read_32(SYSTEM_CTRL_BASE_HP + REG_HSYS_HP_CKSL));
 }
 
 /* switch AP frequency to ap_pll/3, this function shall be called from privileged mode */
@@ -101,8 +109,8 @@ void arm_gic_freq_switch(uint32_t pre_div)
 
 	/* if div is 1 or 2, then div 3 to access gic */
 	if (pre_div < AP_CLK_DIV3) {
-		temp = HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL);
-		HAL_WRITE32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL, (temp & ~HSYS_MASK_CKD_AP) | HSYS_CKD_AP(AP_CLK_DIV3));
+		temp = mmio_read_32(SYSTEM_CTRL_BASE_HP + REG_HSYS_HP_CKSL);
+		mmio_write_32(SYSTEM_CTRL_BASE_HP + REG_HSYS_HP_CKSL, (temp & ~HSYS_MASK_CKD_AP) | HSYS_CKD_AP(AP_CLK_DIV3));
 	}
 }
 
@@ -112,8 +120,8 @@ void arm_gic_freq_restore(uint32_t pre_div)
 	uint32_t temp;
 
 	if (pre_div < AP_CLK_DIV3) {
-		temp = HAL_READ32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL);
-		HAL_WRITE32(SYSTEM_CTRL_BASE_HP, REG_HSYS_HP_CKSL, (temp & ~HSYS_MASK_CKD_AP) | HSYS_CKD_AP(pre_div));
+		temp = mmio_read_32(SYSTEM_CTRL_BASE_HP + REG_HSYS_HP_CKSL);
+		mmio_write_32(SYSTEM_CTRL_BASE_HP + REG_HSYS_HP_CKSL, (temp & ~HSYS_MASK_CKD_AP) | HSYS_CKD_AP(pre_div));
 	}
 
 }

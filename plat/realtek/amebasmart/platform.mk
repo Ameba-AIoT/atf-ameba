@@ -188,6 +188,11 @@ $(eval $(call assert_boolean,ARM_PLAT_MT))
 $(eval $(call add_define,CPU_ARMv8_2))
 $(eval $(call add_define,ARM_GIC_ARCH))
 
+# PSRAM memory layout (secure DRAM at PSRAM top); 0 = original DDR layout.
+AMEBA_PSRAM_LAYOUT	?=	0
+$(eval $(call assert_boolean,AMEBA_PSRAM_LAYOUT))
+$(eval $(call add_define,AMEBA_PSRAM_LAYOUT))
+
 # Process flags
 $(eval $(call add_define,BL32_RAM_LOCATION_ID))
 

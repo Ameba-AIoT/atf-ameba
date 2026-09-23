@@ -66,6 +66,21 @@
 #define SEC_ROM_BASE			0x0
 #define SEC_ROM_SIZE			0x00000400
 
+#if AMEBA_PSRAM_LAYOUT
+/* 8MB-PSRAM XIP boards (rtl8730eah-vd3): secure DRAM moved to the top of PSRAM so
+ * the non-secure base is 2MB-aligned. Keep in sync with firmware ameba_layout.ld. */
+#define SEC_SRAM_BASE			0x70775000
+#define SEC_SRAM_SIZE			0x00002000
+
+#define SEC_DRAM_BASE			0x70760000
+#define SEC_DRAM_SIZE			0x00040000
+
+#define NS_DRAM0_BASE			0x60000000
+/* Bounds ATF's own MMU mapping only (not Linux RAM); must fully contain
+ * MAP_FLASH0 (ends 0x61000000) or xlat_tables rejects the partial overlap. */
+#define NS_DRAM0_SIZE			0x01000000
+#else
+/* Default (DDR) boards: va6 / va7 / va8 -- original layout, unchanged. */
 #define SEC_SRAM_BASE			0x701B0000
 #define SEC_SRAM_SIZE			0x00010000
 
@@ -74,6 +89,7 @@
 
 #define NS_DRAM0_BASE			0x60300000
 #define NS_DRAM0_SIZE			0x00D00000
+#endif /* AMEBA_PSRAM_LAYOUT */
 
 /*
  * ARM-TF lives in SRAM, partition it here
@@ -106,9 +122,16 @@
  * the current BL1 RW debug size plus a little space for growth.
  */
 #define BL1_RO_BASE			SEC_DRAM_BASE
+#if AMEBA_PSRAM_LAYOUT
+/* Trimmed to fit the 256K SEC_DRAM on PSRAM boards. */
+#define BL1_RO_LIMIT		(BL1_RO_BASE + 0x8000)
+#define BL1_RW_BASE			(BL1_RO_LIMIT)
+#define BL1_RW_SIZE			(0xD000)
+#else
 #define BL1_RO_LIMIT		(BL1_RO_BASE + 0x20000)
 #define BL1_RW_BASE			(BL1_RO_LIMIT)
 #define BL1_RW_SIZE			(0x10000)
+#endif
 #define BL1_RW_LIMIT		(BL1_RW_BASE + BL1_RW_SIZE)
 
 /*
@@ -117,8 +140,13 @@
  * Put BL2 just below BL3-1. BL2_BASE is calculated using the current BL2 debug
  * size plus a little space for growth.
  */
+#if AMEBA_PSRAM_LAYOUT
+#define BL2_BASE			(BL1_RW_LIMIT + 0x2000)	//skip SHARED_RAM
+#define BL2_LIMIT			(BL2_BASE + 0x11000)
+#else
 #define BL2_BASE			(BL1_RW_LIMIT + 0x10000)	//skip SHARED_RAM
 #define BL2_LIMIT			(BL2_BASE + 0x40000)
+#endif
 
 #define BL2_RW_BASE			(BL2_BASE)
 #define BL2_RW_LIMIT		(BL2_LIMIT)
@@ -191,6 +219,9 @@
 #define PLAT_AMEBASMART_CRASH_UART_CLK_IN_HZ	UART1_CLK_IN_HZ
 
 #define PLAT_AMEBASMART_CONSOLE_BAUDRATE	1500000
+
+/* Mirror of firmware hal_platform.h: reserved FIP size in DRAM */
+#define CA32_FIP_MAX_SIZE		(0x00200000)  /* 2MB */
 
 #define AMEBA_FLASH0_BASE		0x60400000
 #define AMEBA_FLASH0_SIZE		0x00C00000

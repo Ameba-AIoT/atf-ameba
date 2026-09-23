@@ -183,11 +183,13 @@ static int ameba_bl2_handle_post_image_load(unsigned int image_id)
 		pager_mem_params->ep_info.lr_svc = bl_mem_params->ep_info.pc;
 
 		MPC1->ENTRY[7].IDAU_BARx = AMEBA_OPTEE_SHMEM_START - DRAM_START_ADDR;
-#else
-		MPC1->ENTRY[7].IDAU_BARx = NS_DRAM0_BASE - DRAM_START_ADDR;
-#endif
 		/* configure MPC to set FIP location to Non-secure */
 		MPC1->ENTRY[7].IDAU_LARx = 0x00500000 - 1;
+#else
+		MPC1->ENTRY[7].IDAU_BARx = NS_DRAM0_BASE - DRAM_START_ADDR;
+		/* FIP staging area sits at the start of the non-secure region. */
+		MPC1->ENTRY[7].IDAU_LARx = NS_DRAM0_BASE - DRAM_START_ADDR + CA32_FIP_MAX_SIZE - 1;
+#endif
 
 		MPC1->IDAU_CTRL |= BIT(7);
 		MPC1->IDAU_LOCK = 1;
